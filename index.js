@@ -12,10 +12,10 @@ var port = process.env.PORT || 8080;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', verificationController);
-app.post('/', messageWebhookController);
-app.post('/image-search', imageSearchController);
-
 app.listen(port, function() {
     console.log('Our app is running on http://localhost:' + port);
 });
+
+app.get('/', verificationController);
+app.post('/', messageWebhookController);
+app.post('/image-search', imageSearchController);
