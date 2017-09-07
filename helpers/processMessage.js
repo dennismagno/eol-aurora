@@ -38,7 +38,7 @@ module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
 
-    const apiaiSession = apiAiClient.textRequest(message, {sessionId: 'botcube_co'});
+    const apiaiSession = apiAiClient.textRequest(message, {sessionId: 'EOL Aurora'});
 
     apiaiSession.on('response', (response) => {
         const result = response.result.fulfillment.speech;
