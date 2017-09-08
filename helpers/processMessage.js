@@ -46,6 +46,7 @@ module.exports = (event) => {
         if (response.result.metadata.intentName === 'images.search') {
             sendImage(senderId, result);
         } else {
+            console.log(event.sender);
             sendTextMessage(senderId, result);
         }
     });
