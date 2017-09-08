@@ -88,7 +88,6 @@ module.exports = (event) => {
     const message = event.message.text;
 
     const apiaiSession = apiAiClient.textRequest(message, {sessionId: 'EOL Aurora'});
-
     apiaiSession.on('response', (response) => {
         const result = response.result.fulfillment.speech;
 
