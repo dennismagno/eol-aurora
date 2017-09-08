@@ -99,7 +99,7 @@ module.exports = (event) => {
             if (event.message && event.message.text) {
                 let text = event.message.text
                 if (text === 'Generic') {
-                    sendGenericMessage(sender)
+                    sendGenericMessage(senderId)
                     continue
                 }
             }
