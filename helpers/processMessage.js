@@ -98,8 +98,8 @@ module.exports = (event) => {
             if (event.message && event.message.text) {
                 let text = event.message.text
                 if (text === 'Generic') {
-                    sendGenericMessage(senderId)
-                    continue
+                    sendGenericMessage(senderId);
+                    continue;
                 }
             }
             sendTextMessage(senderId, result);
