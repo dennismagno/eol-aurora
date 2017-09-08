@@ -18,7 +18,7 @@ const sendTextMessage = (senderId, text) => {
 
 module.exports = (event) => {
     const commentId = event.value.comment_id;
-    const senderId = event.value.sender_id;
+    const senderId = 1437288159680128;//event.value.sender_id;
     const postId = event.value.post_id;
     const userMessage = event.value.message;
 
