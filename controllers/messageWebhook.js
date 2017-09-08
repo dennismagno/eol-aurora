@@ -15,8 +15,7 @@ module.exports = (req, res) => {
             if (entry.hasOwnProperty('changes')) {
                 entry.changes.forEach(event => {
                     if (event.field == "feed" && event.value.item == "comment" && event.value.verb == "add") {
-                        //processFeeds(event);
-                        console.log(event.value);
+                        processFeeds(event);
                     }
                 });
             }
