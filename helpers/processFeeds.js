@@ -4,13 +4,14 @@ const request = require('request');
 
 module.exports = (event) => {
     const commentId = event.value.comment_id;
-    const message = "Hello world!";
-
+    const messageData = {
+                message: "Hello world!"
+              };
     request({
         uri: 'https://graph.facebook.com/v2.9/' + commentId + '/private_replies',
         qs: { access_token: FACEBOOK_ACCESS_TOKEN },
         method: 'POST',
-        json: message
+        json: messageData
     }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body);
