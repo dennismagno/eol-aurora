@@ -42,8 +42,8 @@ const sendGenericMessage = (sender) => {
 				"template_type": "generic",
 			    "elements": [{
 					"title": "First card",
-				    "subtitle": "Element #1 of an hscroll",
-				    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+				    "subtitle": "Gundam News, Gunpla Latest Release Model Kits",
+				    "image_url": "http://www.gundamtoyshop.com/uploads/1/4/1/7/14174478/4598971_orig.jpg",
 				    "buttons": [{
 					    "type": "web_url",
 					    "url": "https://www.messenger.com",
@@ -55,8 +55,8 @@ const sendGenericMessage = (sender) => {
 				    }],
 			    }, {
 				    "title": "Second card",
-				    "subtitle": "Element #2 of an hscroll",
-				    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+				    "subtitle": "Perfect Grade Strike Gundam",
+				    "image_url": "https://vignette2.wikia.nocookie.net/gundam/images/6/6a/Pg-strike-gundam-box.jpg",
 				    "buttons": [{
 					    "type": "postback",
 					    "title": "Postback",
