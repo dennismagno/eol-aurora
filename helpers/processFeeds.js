@@ -6,8 +6,6 @@ module.exports = (event) => {
     const commentId = event.value.comment_id;
     const message = "Hello world!";
 
-    sendTextMessage(senderId, result);
-
     request({
         uri: 'https://graph.facebook.com/v2.9/' + commentId + '/private_replies',
         qs: { access_token: FACEBOOK_ACCESS_TOKEN },
