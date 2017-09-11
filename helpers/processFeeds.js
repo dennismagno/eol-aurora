@@ -19,7 +19,7 @@ const sendTextMessage = (senderId, text) => {
 const callPrivateReply = (messageData,comment_id) => {
   request({
     uri: 'https://graph.facebook.com/v2.9/'+comment_id+'/private_replies',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
+    qs: { access_token: FACEBOOK_ACCESS_TOKEN },
     method: 'POST',
     json: messageData
 }, function (error, response, body) {
