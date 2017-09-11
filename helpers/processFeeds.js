@@ -38,6 +38,11 @@ module.exports = (event) => {
     const userMessage = event.value.message;
 
     var genericMessage = "You commented on `" + userMessage + "` on our post `" + postId + "`";
+
+    var messageData = {
+                message: genericMessage
+              };
+
     //sendTextMessage(senderId,genericMessage);
-    callPrivateReply(genericMessage, commentId);
+    callPrivateReply(messageData, commentId);
 };
