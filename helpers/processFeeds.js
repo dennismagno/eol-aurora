@@ -16,6 +16,21 @@ const sendTextMessage = (senderId, text) => {
     });
 };
 
+const callPrivateReply = (messageData,comment_id) => {
+  request({
+    uri: 'https://graph.facebook.com/v2.9/'+comment_id+'/private_replies',
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageData
+}, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log(body);
+    } else {
+      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    }
+  });  
+}
+
 module.exports = (event) => {
     const commentId = event.value.comment_id;
     const senderId = 1437288159680128;//event.value.sender_id;
@@ -23,5 +38,6 @@ module.exports = (event) => {
     const userMessage = event.value.message;
 
     var genericMessage = "You commented on `" + userMessage + "` on our post `" + postId + "`";
-    sendTextMessage(senderId,genericMessage);
+    //sendTextMessage(senderId,genericMessage);
+    callPrivateReply(genericMessage, commentId);
 };
