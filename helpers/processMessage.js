@@ -128,15 +128,35 @@ const sendGenericMessage = (sender) => {
 					"title": "First card",
 				    "subtitle": "Gundam News, Gunpla Latest Release Model Kits",
 				    "image_url": "http://www.gundamtoyshop.com/uploads/1/4/1/7/14174478/4598971_orig.jpg",
-				    "buttons": [{
-					    "type": "web_url",
-					    "url": "https://www.messenger.com",
-					    "title": "web url"
-				    }, {
-					    "type": "postback",
-					    "title": "Postback",
-					    "payload": "Payload for first element in a generic bubble",
-				    }],
+				    "buttons":[
+                        {
+                        "type":"payment",
+                        "title":"buy",
+                        "payload":"DEVELOPER_DEFINED_PAYLOAD",
+                        "payment_summary":{
+                            "currency":"USD",
+                            "payment_type":"FIXED_AMOUNT",
+                            "is_test_payment" : true, 
+                            "merchant_name":"Peter's Apparel",
+                            "requested_user_info":[
+                            "shipping_address",
+                            "contact_name",
+                            "contact_phone",
+                            "contact_email"
+                            ],
+                            "price_list":[
+                            {
+                                "label":"Subtotal",
+                                "amount":"29.99"
+                            },
+                            {
+                                "label":"Taxes",
+                                "amount":"2.47"
+                            }
+                            ]
+                        }
+                        }
+                    ],
 			    }, {
 				    "title": "Second card",
 				    "subtitle": "Perfect Grade Strike Gundam",
