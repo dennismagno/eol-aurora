@@ -34,6 +34,43 @@ const sendTextMessage = (senderId, text) => {
     });
 };
 
+const sendQuickreply = (sender) => {
+    let messageData ={  "text": "Here's a quick reply!",
+                        "quick_replies":[
+                                        {
+                                            "content_type":"text",
+                                            "title":"Search",
+                                            "payload":"<POSTBACK_PAYLOAD>",
+                                            "image_url":"http://example.com/img/red.png"
+                                        },
+                                        {
+                                            "content_type":"location"
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"Something Else",
+                                            "payload":"<POSTBACK_PAYLOAD>"
+                                        }
+                                    ]
+                        }
+
+    request({
+	    url: 'https://graph.facebook.com/v2.6/me/messages',
+	    qs: {access_token:FACEBOOK_ACCESS_TOKEN},
+	    method: 'POST',
+	    json: {
+		    recipient: {id:sender},
+		    message: messageData,
+	    }
+    }, function(error, response, body) {
+	    if (error) {
+		    console.log('Error sending messages: ', error)
+	    } else if (response.body.error) {
+		    console.log('Error: ', response.body.error)
+	    }
+    });
+};
+
 const sendGenericMessage = (sender) => {
     let messageData = {
 	    "attachment": {
@@ -97,10 +134,16 @@ module.exports = (event) => {
             console.log(event.sender);
             if (event.message && event.message.text) {
                 let text = event.message.text
-                if (text === 'Generic') {
-                    sendGenericMessage(senderId);
-                } else {
-                    sendTextMessage(senderId, result);
+                switch (text) {
+                    case "Generic":
+                        sendGenericMessage(senderId);
+                        break;
+                    case "Quick":
+                        sendQuickreply(senderId);
+                        break;
+                    default:
+                        sendTextMessage(senderId, result);
+                        break;
                 }
             } else {
                 sendTextMessage(senderId, result);
