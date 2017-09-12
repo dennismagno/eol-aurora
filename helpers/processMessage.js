@@ -175,6 +175,9 @@ module.exports = (event) => {
                     case "Quick":
                         sendQuickreply(senderId);
                         break;
+                    case "Receipt":
+                        sendReceipt(senderId);
+                        break;
                     default:
                         sendTextMessage(senderId, { result });
                         break;
