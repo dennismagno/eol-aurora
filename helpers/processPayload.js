@@ -74,7 +74,7 @@ const callPrivateReply = (messageData,comment_id) => {
 module.exports = (event) => {
     const commentId = event.value.comment_id;
     const senderId = 1437288159680128;//event.value.sender_id;
-    const payload = event.postback.payload;
+    const payload = event.message.quick_reply.payload;
     var genericMessage = "";
     
     switch (payload) {

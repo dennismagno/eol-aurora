@@ -8,11 +8,13 @@ module.exports = (req, res) => {
                 entry.messaging.forEach(event => {
                     console.log(event);
                     if (event.message && event.message.text) {
-                        processMessage(event);
-                    }
-
-                    if (event.postback && event.postback.payload) {
-                        processPayload(event);
+                        if (event.message.quick_reply && event.message.quick_reply.payload)
+                        {
+                            processPayload(event);
+                        } else {
+                            processMessage(event);
+                        }
+                       
                     }
                 });
             }
