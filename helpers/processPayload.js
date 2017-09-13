@@ -32,6 +32,25 @@ const senOptionQty = (sender) => {
     sendTemplateMessage(sender,messageData);
 };
 
+const createSalesOrder = (sender) => {
+    var request = require("request");
+
+    var options = { method: 'POST',
+    url: 'https://5a109f3c.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
+    headers: 
+        {   'cache-control': 'no-cache',
+            authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+            accept: 'application/json',
+            'content-type': 'application/json' },
+        body: '{\r\n\r\nDescription: \'Sales to FB Customer 1\',\r\nOrderDate: \'09/13/2017 00:00:00\',\r\nOrderedBy : \'8269B2F3-139B-4BA9-BA1A-C197AED7DA72\',\r\nWarehouseID : \'be56f57c-c97c-47ed-84ae-ebf01a758b5f\',\r\n\r\nSalesOrderLines:\r\n[\r\n\r\n{Description: \'FB Order item 1\', Item: \'0d16df33-db0a-46c2-a984-926d6ed57470\', UnitPrice: 61, Quantity: 2}\r\n\r\n]\r\n\r\n}' };
+
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+    });
+};
+
 const sendTemplateMessage = (senderId, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -71,6 +90,67 @@ const callPrivateReply = (messageData,comment_id) => {
   });  
 }
 
+const sendReceipt = (sender) => {
+    let messageData = {
+                    "attachment":{
+                    "type":"template",
+                    "payload":{
+                        "template_type":"receipt",
+                        "recipient_name":"Stephane Crozatier",
+                        "order_number":"12345678902",
+                        "currency":"USD",
+                        "payment_method":"Visa 2345",        
+                        "order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
+                        "timestamp":"1428444852",         
+                        "address":{
+                        "street_1":"1 Hacker Way",
+                        "street_2":"",
+                        "city":"Menlo Park",
+                        "postal_code":"94025",
+                        "state":"CA",
+                        "country":"US"
+                        },
+                        "summary":{
+                        "subtotal":75.00,
+                        "shipping_cost":4.95,
+                        "total_tax":6.19,
+                        "total_cost":56.14
+                        },
+                        "adjustments":[
+                        {
+                            "name":"New Customer Discount",
+                            "amount":20
+                        },
+                        {
+                            "name":"$10 Off Coupon",
+                            "amount":10
+                        }
+                        ],
+                        "elements":[
+                        {
+                            "title":"Classic White T-Shirt",
+                            "subtitle":"100% Soft and Luxurious Cotton",
+                            "quantity":2,
+                            "price":50,
+                            "currency":"USD",
+                            "image_url":"http://petersapparel.parseapp.com/img/whiteshirt.png"
+                        },
+                        {
+                            "title":"Classic Gray T-Shirt",
+                            "subtitle":"100% Soft and Luxurious Cotton",
+                            "quantity":1,
+                            "price":25,
+                            "currency":"USD",
+                            "image_url":"http://petersapparel.parseapp.com/img/grayshirt.png"
+                        }
+                        ]
+                    }
+                    }
+                }
+    
+    sendTemplateMessage(sender,messageData);
+}
+
 module.exports = (event) => {
     const senderId = 1437288159680128;//event.value.sender_id;
     const payload = event.message.quick_reply.payload;
@@ -79,6 +159,10 @@ module.exports = (event) => {
     switch (payload) {
         case "YES_ORDER":
             senOptionQty(senderId);
+            break;
+        case "TWO_QTY":
+            createSalesOrder();
+            sendReceipt(senderId);
             break;
     }
 };
