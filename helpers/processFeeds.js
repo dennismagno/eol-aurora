@@ -7,13 +7,13 @@ const sendQuickreply = (sender,message) => {
                         "quick_replies":[
                                         {
                                             "content_type":"text",
-                                            "title":"Search",
+                                            "title":"Yes",
                                             "payload":"Yes",
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
                                         },
                                         {
                                             "content_type":"text",
-                                            "title":"Search",
+                                            "title":"No",
                                             "payload":"No",
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
                                         }
