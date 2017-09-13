@@ -53,7 +53,7 @@ const sendQuickreply = (sender) => {
                                             "content_type":"text",
                                             "title":"Search",
                                             "payload":"<POSTBACK_PAYLOAD>",
-                                            "image_url":"http://example.com/img/red.png"
+                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
                                         },
                                         {
                                             "content_type":"location"
