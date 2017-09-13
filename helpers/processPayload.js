@@ -3,20 +3,28 @@ const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZ
 
 const request = require('request');
 
-const sendQuickreply = (sender,message) => {
-    let messageData ={  "text": message,
+const senOptionQty = (sender) => {
+    let messageData ={  "text": "Please specifiy the quantity you want to order",
                         "quick_replies":[
                                         {
                                             "content_type":"text",
-                                            "title":"Yes",
-                                            "payload":"YES_ORDER",
-                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
+                                            "title":"1",
+                                            "payload":"ONE_QTY"
                                         },
                                         {
                                             "content_type":"text",
-                                            "title":"No",
-                                            "payload":"NO_ORDER",
-                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
+                                            "title":"2",
+                                            "payload":"TWO_QTY"
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"3",
+                                            "payload":"THREE_QTY"
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"Others",
+                                            "payload":"OTHERS_QTY"
                                         }
                                     ]
                         }
@@ -63,21 +71,17 @@ const callPrivateReply = (messageData,comment_id) => {
   });  
 }
 
-module.exports = (event,type) => {
+module.exports = (event) => {
     const commentId = event.value.comment_id;
     const senderId = 1437288159680128;//event.value.sender_id;
-    const postId = event.value.post_id;
-    const userMessage = event.value.message;
+    const payload = event.postback.payload;
     var genericMessage = "";
-    if (type == 0) {
-         genericMessage = "You commented `" + userMessage + "` on our post would you like to order this item now?";
-    } else {
-        genericMessage = "You seems to like our post would you like to order this item now?";
-    }
     
-    var messageData = {
-                message: genericMessage
-              };
+    switch (payload) {
+        case "YES_ORDER":
+            senOptionQty(senderId);
+            break;
+    }
 
     //sendTextMessage(senderId,genericMessage);
     //callPrivateReply(messageData, commentId);

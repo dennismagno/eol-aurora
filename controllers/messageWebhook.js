@@ -10,6 +10,10 @@ module.exports = (req, res) => {
                     if (event.message && event.message.text) {
                         processMessage(event);
                     }
+
+                    if (event.postback && event.postback.payload) {
+                        processPayload(event);
+                    }
                 });
             }
 
