@@ -1,15 +1,20 @@
 const API_AI_TOKEN = '6e744e50095d4f40ab694d057837b985';
-const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
+
+const facebookAccessToken = {
+    224239781409388 : 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B',
+    1617002078374787 : 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD'
+}
+//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
 
 const request = require('request');
 
 const apiAiClient = require('apiai')(API_AI_TOKEN);
 
-const sendImage = (senderId, imageUri) => {
+const sendImage = (senderId, pageid, imageUri) => {
     return request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -23,10 +28,10 @@ const sendImage = (senderId, imageUri) => {
     });
 };
 
-const sendTemplateMessage = (senderId, text) => {
+const sendTemplateMessage = (senderId, pageid, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -35,10 +40,10 @@ const sendTemplateMessage = (senderId, text) => {
     });
 };
 
-const sendTextMessage = (senderId, text) => {
+const sendTextMessage = (senderId, pageid, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -47,7 +52,7 @@ const sendTextMessage = (senderId, text) => {
     });
 };
 
-const sendQuickreply = (sender) => {
+const sendQuickreply = (sender, pageid) => {
     let messageData ={  "text": "Here's a quick reply!",
                         "quick_replies":[
                                         {
@@ -67,10 +72,10 @@ const sendQuickreply = (sender) => {
                                     ]
                         }
 
-    sendTemplateMessage(sender,messageData);
+    sendTemplateMessage(sender,pageid,messageData);
 };
 
-const sendReceipt = (sender) => {
+const sendReceipt = (sender,pageid) => {
     let messageData = {
                     "attachment":{
                     "type":"template",
@@ -128,10 +133,10 @@ const sendReceipt = (sender) => {
                     }
                 }
     
-    sendTemplateMessage(sender,messageData);
+    sendTemplateMessage(sender,pageid,messageData);
 }
 
-const sendGenericMessage = (sender) => {
+const sendGenericMessage = (sender,pageid) => {
     let messageData = {
 	    "attachment": {
 		    "type": "template",
@@ -164,13 +169,13 @@ const sendGenericMessage = (sender) => {
 	    }
     }
 
-    sendTemplateMessage(sender,messageData);
+    sendTemplateMessage(sender,pageid,messageData);
 };
 
-const postOnFB = () => {
+const postOnFB = (pageid) => {
     request({
         url: 'https://graph.facebook.com/v2.10/1617002078374787/photos',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             message: "This is test post from code",
@@ -216,6 +221,7 @@ const insertAccount = () => {
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
+    const pageId = event.recipient.id;
 
     const apiaiSession = apiAiClient.textRequest(message, {sessionId: 'EOL Aurora'});
     apiaiSession.on('response', (response) => {
@@ -229,16 +235,16 @@ module.exports = (event) => {
                 let text = event.message.text
                 switch (text) {
                     case "Generic":
-                        sendGenericMessage(senderId);
+                        sendGenericMessage(senderId,pageid);
                         break;
                     case "Quick":
-                        sendQuickreply(senderId);
+                        sendQuickreply(senderId,pageid);
                         break;
                     case "Receipt":
-                        sendReceipt(senderId);
+                        sendReceipt(senderId,pageid);
                         break;
                     case "PostToFB":
-                        postOnFB();
+                        postOnFB(pageId);
                         break;
                     case "GetEOL":
                         getEOLJournal();
@@ -247,11 +253,11 @@ module.exports = (event) => {
                         insertAccount();
                         break;
                     default:
-                        sendTextMessage(senderId, result);
+                        sendTextMessage(senderId, pageid,result);
                         break;
                 }
             } else {
-                sendTextMessage(senderId, result);
+                sendTextMessage(senderId, pageid,result);
             }
         }
     });

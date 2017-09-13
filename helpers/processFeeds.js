@@ -1,9 +1,20 @@
-const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
+const facebookAccessToken = {
+    224239781409388 : 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B',
+    1617002078374787 : 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD'
+}
+
+const facebookUserId = {
+    852464038261499 : 1437288159680128,
+    123939111678488 : 1540337582671286,
+    1617002078374787: 1804321282941786
+}
+
+//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
 
 const request = require('request');
 
-const sendQuickreply = (sender,message) => {
+const sendQuickreply = (sender,pageid,message) => {
     let messageData ={  "text": message,
                         "quick_replies":[
                                         {
@@ -24,10 +35,10 @@ const sendQuickreply = (sender,message) => {
     sendTemplateMessage(sender,messageData);
 };
 
-const sendTemplateMessage = (senderId, text) => {
+const sendTemplateMessage = (senderId,pageid, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -36,10 +47,10 @@ const sendTemplateMessage = (senderId, text) => {
     });
 };
 
-const sendTextMessage = (senderId, text) => {
+const sendTextMessage = (senderId,pageid, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        qs: { access_token: facebookAccessToken[pageid] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -51,7 +62,7 @@ const sendTextMessage = (senderId, text) => {
 const callPrivateReply = (messageData,comment_id) => {
   request({
     uri: 'https://graph.facebook.com/v2.9/'+comment_id+'/Comments',
-    qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+    qs: { access_token: facebookAccessToken[pageid]  },
     method: 'POST',
     json: messageData
 }, function (error, response, body) {
@@ -65,7 +76,8 @@ const callPrivateReply = (messageData,comment_id) => {
 
 module.exports = (event,type) => {
     const commentId = event.value.comment_id;
-    const senderId = 1437288159680128;//event.value.sender_id;
+    const pageId = commentId.split("_")[0];
+    const senderId = facebookUserId[event.value.sender_id];
     const postId = event.value.post_id;
     const userMessage = event.value.message;
     var genericMessage = "";
@@ -81,5 +93,5 @@ module.exports = (event,type) => {
 
     //sendTextMessage(senderId,genericMessage);
     //callPrivateReply(messageData, commentId);
-    sendQuickreply(senderId,genericMessage);
+    sendQuickreply(senderId,pageId,genericMessage);
 };
