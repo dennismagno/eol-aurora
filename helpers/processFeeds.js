@@ -2,7 +2,38 @@ const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAE04GzhgftRk1kA4FZAeggl1ZCZCso6csHZB
 
 const request = require('request');
 
+const sendQuickreply = (sender,message) => {
+    let messageData ={  "text": message,
+                        "quick_replies":[
+                                        {
+                                            "content_type":"text",
+                                            "title":"Search",
+                                            "payload":"Yes",
+                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"Search",
+                                            "payload":"No",
+                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
+                                        }
+                                    ]
+                        }
 
+    sendTemplateMessage(sender,messageData);
+};
+
+const sendTemplateMessage = (senderId, text) => {
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        method: 'POST',
+        json: {
+            recipient: { id: senderId },
+            message: text,
+        }
+    });
+};
 
 const sendTextMessage = (senderId, text) => {
     request({
@@ -37,12 +68,13 @@ module.exports = (event) => {
     const postId = event.value.post_id;
     const userMessage = event.value.message;
 
-    var genericMessage = "You commented on `" + userMessage + "` on our post `" + postId + "`";
+    var genericMessage = "You commented `" + userMessage + "` on our post would you like to order this item now?";
 
     var messageData = {
                 message: genericMessage
               };
 
     //sendTextMessage(senderId,genericMessage);
-    callPrivateReply(messageData, commentId);
+    //callPrivateReply(messageData, commentId);
+    sendQuickreply(senderId,genericMessage);
 };
