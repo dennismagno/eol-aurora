@@ -81,8 +81,4 @@ module.exports = (event) => {
             senOptionQty(senderId);
             break;
     }
-
-    //sendTextMessage(senderId,genericMessage);
-    //callPrivateReply(messageData, commentId);
-    sendQuickreply(senderId,genericMessage);
 };
