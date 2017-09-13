@@ -41,7 +41,7 @@ const sendQuickreply = (sender) => {
                                             "content_type":"text",
                                             "title":"Search",
                                             "payload":"<POSTBACK_PAYLOAD>",
-                                            "image_url":"../icons/aurora-like.png"
+                                            "image_url":"http://example.com/img/red.png"
                                         },
                                         {
                                             "content_type":"location"
