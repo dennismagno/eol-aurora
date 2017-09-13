@@ -9,6 +9,9 @@ const imageSearchController = require('./controllers/imageSearch');
 
 var port = process.env.PORT || 8080;
 
+var path = require('path');
+
+app.use(express.static(path.resolve('./public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
