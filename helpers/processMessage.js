@@ -193,7 +193,7 @@ const getEOLJournal = () => {
         if (error) throw new Error(error);
         console.log(body);
     });
-}
+};
 
 module.exports = (event) => {
     const senderId = event.sender.id;
