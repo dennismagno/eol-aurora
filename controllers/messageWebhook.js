@@ -16,11 +16,11 @@ module.exports = (req, res) => {
                 entry.changes.forEach(event => {
                     console.log(event);
                     if (event.field == "feed" && event.value.item == "comment" && event.value.verb == "add") {
-                        processFeeds(event);
+                        processFeeds(event,0);
                     }
 
                     if (event.field == "feed" && event.value.reaction_type == "like" && event.value.verb == "add") {
-                        processFeeds(event);
+                        processFeeds(event,1);
                     }
                 });
             }

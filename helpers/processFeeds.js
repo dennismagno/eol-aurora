@@ -62,14 +62,18 @@ const callPrivateReply = (messageData,comment_id) => {
   });  
 }
 
-module.exports = (event) => {
+module.exports = (event,type) => {
     const commentId = event.value.comment_id;
     const senderId = 1437288159680128;//event.value.sender_id;
     const postId = event.value.post_id;
     const userMessage = event.value.message;
-
-    var genericMessage = "You commented `" + userMessage + "` on our post would you like to order this item now?";
-
+    var genericMessage = "";
+    if (type == 0) {
+         genericMessage = "You commented `" + userMessage + "` on our post would you like to order this item now?";
+    } else {
+        genericMessage = "You seems to like our post would you like to order this item now?";
+    }
+    
     var messageData = {
                 message: genericMessage
               };
