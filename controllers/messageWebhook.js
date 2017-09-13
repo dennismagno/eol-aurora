@@ -1,5 +1,6 @@
 const processMessage = require('../helpers/processMessage');
 const processFeeds = require('../helpers/processFeeds');
+const processPayload = require('../helpers/processPayload');
 
 module.exports = (req, res) => {
     if (req.body.object === 'page') {
