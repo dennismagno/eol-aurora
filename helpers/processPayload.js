@@ -36,7 +36,7 @@ const createSalesOrder = (sender) => {
     var request = require("request");
 
     var options = { method: 'POST',
-    url: 'https://5a109f3c.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
+    url: 'https://de732193.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
     headers: 
         {   'cache-control': 'no-cache',
             authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
