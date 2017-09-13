@@ -22,7 +22,7 @@ const sendImage = (senderId, imageUri) => {
     });
 };
 
-const sendTextMessage = (senderId, text) => {
+const sendTemplateMessage = (senderId, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: { access_token: FACEBOOK_ACCESS_TOKEN },
@@ -30,6 +30,18 @@ const sendTextMessage = (senderId, text) => {
         json: {
             recipient: { id: senderId },
             message: text,
+        }
+    });
+};
+
+const sendTextMessage = (senderId, text) => {
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        method: 'POST',
+        json: {
+            recipient: { id: senderId },
+            message: { text },
         }
     });
 };
@@ -54,7 +66,7 @@ const sendQuickreply = (sender) => {
                                     ]
                         }
 
-    sendTextMessage(sender,messageData);
+    sendTemplateMessage(sender,messageData);
 };
 
 const sendReceipt = (sender) => {
@@ -115,7 +127,7 @@ const sendReceipt = (sender) => {
                     }
                 }
     
-    sendTextMessage(sender,messageData);
+    sendTemplateMessage(sender,messageData);
 }
 
 const sendGenericMessage = (sender) => {
@@ -151,7 +163,7 @@ const sendGenericMessage = (sender) => {
 	    }
     }
 
-    sendTextMessage(sender,messageData);
+    sendTemplateMessage(sender,messageData);
 };
 
 module.exports = (event) => {
@@ -179,11 +191,11 @@ module.exports = (event) => {
                         sendReceipt(senderId);
                         break;
                     default:
-                        sendTextMessage(senderId, { result });
+                        sendTextMessage(senderId, result);
                         break;
                 }
             } else {
-                sendTextMessage(senderId, { result });
+                sendTextMessage(senderId, result);
             }
         }
     });
