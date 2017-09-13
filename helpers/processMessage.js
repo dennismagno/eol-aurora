@@ -222,6 +222,9 @@ module.exports = (event) => {
                     case "PostToFB":
                         postOnFB();
                         break;
+                    case "GetEOL":
+                        getEOLJournal();
+                        break;
                     default:
                         sendTextMessage(senderId, result);
                         break;
