@@ -1,6 +1,6 @@
 const API_AI_TOKEN = '6e744e50095d4f40ab694d057837b985';
-//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAE04GzhgftRk1kA4FZAeggl1ZCZCso6csHZBmKVrlHpxPWNkyGdw41NssErIDYgZCPk1XPBIZCUiPWoJLsxhYulmLqJ8AYm7lZCtRBVIwhfWOMp1YeX8XLgy8dvXEV0CqGiLNA0BH6aqXeZCZAVCTZBn3AlOEigjRbogKNukWWd8Wh';
-const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
+const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAE04GzhgftRk1kA4FZAeggl1ZCZCso6csHZBmKVrlHpxPWNkyGdw41NssErIDYgZCPk1XPBIZCUiPWoJLsxhYulmLqJ8AYm7lZCtRBVIwhfWOMp1YeX8XLgy8dvXEV0CqGiLNA0BH6aqXeZCZAVCTZBn3AlOEigjRbogKNukWWd8Wh';
+//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
 
 const request = require('request');
 
@@ -167,6 +167,18 @@ const sendGenericMessage = (sender) => {
     sendTemplateMessage(sender,messageData);
 };
 
+const postOnFB = () => {
+    request({
+        url: 'https://graph.facebook.com/v2.10/1617002078374787/photos',
+        qs: { access_token: FACEBOOK_ACCESS_TOKEN },
+        method: 'POST',
+        json: {
+            message: "This is test post from code",
+            url: "https://d2ev13g7cze5ka.cloudfront.net/ban/bann15630_0_1490085596.jpg",
+        }
+    });
+};
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
@@ -190,6 +202,9 @@ module.exports = (event) => {
                         break;
                     case "Receipt":
                         sendReceipt(senderId);
+                        break;
+                    case "PostToFB":
+                        postOnFB();
                         break;
                     default:
                         sendTextMessage(senderId, result);
