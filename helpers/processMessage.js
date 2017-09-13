@@ -195,6 +195,24 @@ const getEOLJournal = () => {
     });
 };
 
+const insertAccount = () => {
+    var request = require("request");
+
+    var options = { method: 'POST',
+    url: 'https://de732193.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    headers: 
+    {  'cache-control': 'no-cache',
+        authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+        accept: 'application/json',
+        'content-type': 'application/json' },
+    body: '{\r\n  Code : \'               301\',\r\n  Name : \'FB Customer 1\',\r\n  Type : \'A\',\r\n  Status : \'C\'\r\n}' };
+
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+        console.log(body);
+    });
+};
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
@@ -224,6 +242,9 @@ module.exports = (event) => {
                         break;
                     case "GetEOL":
                         getEOLJournal();
+                        break;
+                    case "Account":
+                        insertAccount();
                         break;
                     default:
                         sendTextMessage(senderId, result);
