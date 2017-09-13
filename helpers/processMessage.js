@@ -179,6 +179,22 @@ const postOnFB = () => {
     });
 };
 
+const getEOLJournal = () => {
+    var options = { method: 'GET',
+    url: 'https://5a109f3c.ngrok.io/WI775382/api/v1/50580/financial/Journals',
+    headers:  { 'cache-control': 'no-cache',
+                accept: 'application/json',
+                'content-type': 'application/json;charset=utf-8',
+                authorization: 'Basic Q3VzdG9tZXJBZHZhbmNlZFVLOk9ubGluZQ==' 
+                } 
+            };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        console.log(body);
+    });
+}
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
