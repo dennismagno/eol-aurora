@@ -1,5 +1,5 @@
 const API_AI_TOKEN = '6e744e50095d4f40ab694d057837b985';
-const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAE04GzhgftRk1kA4FZAeggl1ZCZCso6csHZBmKVrlHpxPWNkyGdw41NssErIDYgZCPk1XPBIZCUiPWoJLsxhYulmLqJ8AYm7lZCtRBVIwhfWOMp1YeX8XLgy8dvXEV0CqGiLNA0BH6aqXeZCZAVCTZBn3AlOEigjRbogKNukWWd8Wh';
+const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAFQw4T3sIpWvZBr1bgTILOE0MdRQagJCQadjkfK4sTAI3m5B0wPthrTVuIIV09Yv6YI05HGm617jq5dhP09dbZBadTDIknowNdnXCfnIL0fuD8q3S1tGecUevi8ZCN8hOApVzJZBimXoI5UaoPBPZADVbzbV5wwZDZD';
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
 
 const request = require('request');
@@ -179,6 +179,21 @@ const postOnFB = () => {
     });
 };
 
+const getEOLJournal = () => {
+    var options = { method: 'GET',
+    url: 'https://5a109f3c.ngrok.io/WI775382/api/v1/50580/financial/Journals',
+    headers: 
+    { 'cache-control': 'no-cache',
+        accept: 'application/json',
+        'content-type': 'application/json;charset=utf-8',
+        authorization: 'Basic Q3VzdG9tZXJBZHZhbmNlZFVLOk9ubGluZQ==' } };
+
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    console.log(body);
+    });
+}
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
@@ -205,6 +220,9 @@ module.exports = (event) => {
                         break;
                     case "PostToFB":
                         postOnFB();
+                        break;
+                    case "GetJournal":
+                        getEOLJournal();
                         break;
                     default:
                         sendTextMessage(senderId, result);
