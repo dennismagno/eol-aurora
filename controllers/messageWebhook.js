@@ -2,11 +2,11 @@ const processMessage = require('../helpers/processMessage');
 const processFeeds = require('../helpers/processFeeds');
 
 module.exports = (req, res) => {
-    console.log(req);
     if (req.body.object === 'page') {
         req.body.entry.forEach(entry => {
             if (entry.hasOwnProperty('messaging')) {
                 entry.messaging.forEach(event => {
+                    console.log(event);
                     if (event.message && event.message.text) {
                         processMessage(event);
                     }
