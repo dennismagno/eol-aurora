@@ -98,7 +98,7 @@ module.exports = (event,type) => {
     var itemcode = '';
     if (postMessage.indexOf('Item for Sale')) {
         var msgLine = postMessage.split('\n');
-        itemcode = msgLine[1];
+        itemcode = postMessage;
     }
 
     var genericMessage = "";
