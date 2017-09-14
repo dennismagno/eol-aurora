@@ -2,8 +2,12 @@ const facebookAccessToken = {
     224239781409388 : 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B',
     1617002078374787 : 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD',
     486735555052779 : 'EAABmovau6lkBAN7EZCHAyZBhnZB0LS0pgiL55ZCDh9CPUWhDOVCDhsPMZBfauZCXEvhqtpp4lRYyPQoTysAqTznqZCuMcUKKTOB9tsl86eCpm7iybIPVuprg2MIJ6lmlB6ZBDjL5twPBvpUCN9Sm1T2J4d8TaP9kwUNEu43lZBw0LtQZDZD',
-    1120366894763266 : 'EAABmovau6lkBACMOLZAkH81dZCcFsXLZBNylV2j9Hn2XusrZCiPNF6DBc323Pxc5qHdnPZCp8XzN1EpSiUe90ZAZABCb7ZA2cKLZBC1ME7HcHVDc8eOiFvrx9ZA29UQPNp9dZBZCvYSiii5iBV6MdNmdFqwqlgDFZCiNMaLRyw7iYoX0wxAZDZD'
+    1120366894763266 : 'EAABmovau6lkBAKoYzZAFjZBzQzX5R1uuWdXeQmwKk4OQjgnmlcPvZCbPlsXKRKDfkoNpygubA50FhfVC6UL7cvC4fECOxKgTgWhSK2nCBBb2X4aVztk44D8wTzJZBhumFAHEjw8ucaOTCBunifWmyJStjabNT8tJeBtuRvvsbQZDZD'
 };
+
+const pageOwner = {
+    1120366894763266 : 1879680775381226
+}
 
 const request = require('request');
 
@@ -42,7 +46,7 @@ function zeroPad(num, places) {
 }
 
 const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
-    var acctCode = zeroPad(userId,18);
+    var acctCode = userId;
     var options = { method: 'GET',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision +'/crm/Accounts',
     qs: { '$select': 'ID', '$filter': "Code eq \'" + acctCode + "\'" },
@@ -63,7 +67,7 @@ const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivis
 }
 
 const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
-    var acctCode = zeroPad(userId,18);
+    var acctCode = userId;
     var options = { method: 'POST',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/crm/Accounts',
         headers: {  'cache-control': 'no-cache',
@@ -135,7 +139,7 @@ const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemd
 };
 
 const notifyPageOwner = (pageId,orderNo) => {
-    const pageOwner = 1540337582671286;
+    const pageOwner = pageOwner[pageId];
     const message = 'A new tasks is created in EOL for Order No : ' + orderNo;
     sendTextMessage(pageOwner,pageId,message);
 }
@@ -275,6 +279,27 @@ const setTypingOff = (senderId, pageId) => {
         method: 'POST',
         body
     });
+};
+
+const sendAskPhoneNo = (sender,pageid) => {
+    let messageData ={  "text": "Before we can process your order, can we get your contact details?",
+                        "quick_replies":[
+                                        {
+                                            "content_type":"text",
+                                            "title":"Yes",
+                                            "payload":"YES_CONTACT_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision,
+                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"No",
+                                            "payload":"NO_CONTACT_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision,
+                                            "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
+                                        }
+                                    ]
+                        }
+
+    sendTemplateMessage(sender,pageid,messageData);
 };
 
 module.exports = (event) => {
