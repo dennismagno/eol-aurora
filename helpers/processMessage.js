@@ -143,29 +143,25 @@ const sendGenericMessage = (sender,pageid) => {
 	    "attachment": {
 		    "type": "template",
 		    "payload": {
-				"template_type": "generic",
-			    "elements": [{
-					"title": "First card",
-				    "subtitle": "Gundam News, Gunpla Latest Release Model Kits",
-				    "image_url": "http://www.gundamtoyshop.com/uploads/1/4/1/7/14174478/4598971_orig.jpg",
-				    "buttons": [{
-					    "type": "web_url",
-					    "url": "https://www.messenger.com",
-					    "title": "web url"
-				    }, {
-					    "type": "postback",
-					    "title": "Postback",
-					    "payload": "Payload for first element in a generic bubble",
-				    }],
-			    }, {
-				    "title": "Second card",
-				    "subtitle": "Perfect Grade Strike Gundam",
-				    "image_url": "https://vignette2.wikia.nocookie.net/gundam/images/6/6a/Pg-strike-gundam-box.jpg",
-				    "buttons": [{
-					    "type": "postback",
-					    "title": "Postback",
-					    "payload": "Payload for second element in a generic bubble",
-				    }],
+                        "template_type": "generic",
+                        "elements": [{
+                            "title": "First card",
+                            "subtitle": "Gundam News, Gunpla Latest Release Model Kits",
+                            "image_url": "https://eol-aurora.herokuapp.com/items/ttpaddle.jpg",
+                            "buttons": [ {
+                                    "type": "Buy Now",
+                                    "title": "Buy Now",
+                                    "payload": "ttpaddle",
+                                }],
+                        }, {
+                        "title": "Cricket Bat",
+                        "subtitle": "Perfect Grade Strike Gundam",
+                        "image_url": "https://eol-aurora.herokuapp.com/items/cricketbat.jpg",
+                        "buttons": [{
+                            "type": "postback",
+                            "title": "Postback",
+                            "payload": "Payload for second element in a generic bubble",
+                        }],
 			    }]
 		    }
 	    }

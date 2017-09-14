@@ -30,6 +30,11 @@ const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision)
                                             "content_type":"text",
                                             "title":"3",
                                             "payload":"3_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
+                                        },
+                                        {
+                                            "content_type":"text",
+                                            "title":"Others",
+                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         }
                                     ]
                         }
@@ -46,7 +51,7 @@ const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivis
     var acctCode = userId;
     var options = { method: 'GET',
     url: eolUrl + 'api/v1/' + itemDivision +'/crm/Accounts',
-    qs: { '$select': 'ID', '$filter': "TRIM(Code) eq \'" + acctCode + "\'" },
+    qs: { '$select': 'ID', '$filter': "Code eq \'" + zeroPad(acctCode,18) + "\'" },
     headers: 
     {   'cache-control': 'no-cache',
         authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
@@ -136,9 +141,9 @@ const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemd
 };
 
 const notifyPageOwner = (pageId,orderNo) => {
-    const ownerId = pageOwner[pageId];
+    const pageOwner = pageOwner[pageId];
     const message = 'A new tasks is created in EOL for Order No : ' + orderNo;
-    sendTextMessage(ownerId,pageId,message);
+    sendTextMessage(pageOwner,pageId,message);
 }
 
 const notifyCustomer = (userId,pageId,orderNo) => {
