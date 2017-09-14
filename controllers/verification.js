@@ -10,5 +10,5 @@ module.exports = (req, res) => {
         res.status(403).end();
     }*/
     
-    res.status(200).send(hubChallenge);
+    //res.status(200).send(hubChallenge);
 };
