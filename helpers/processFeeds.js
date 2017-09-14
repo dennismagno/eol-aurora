@@ -75,7 +75,7 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
   });  
 }
 
-function getPostDetails(postid,) {
+function getPostDetails(postid,pageid) {
     var retValue = '';
     var options = { method: 'GET',
     url: 'https://graph.facebook.com/v2.6/' + postid,
