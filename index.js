@@ -9,7 +9,7 @@ const verificationController = require('./controllers/verification');
 const messageWebhookController = require('./controllers/messageWebhook');
 const imageSearchController = require('./controllers/imageSearch');
 
-var port = 5555;//process.env.PORT || 8080;
+var port = process.env.PORT || 8080;
 
 var path = require('path');
 
