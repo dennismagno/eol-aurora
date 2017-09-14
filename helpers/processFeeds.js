@@ -13,19 +13,19 @@ const facebookUserId = {
 
 const request = require('request');
 
-const sendQuickreply = (sender,pageid,message,itemcode,senderName) => {
+const sendQuickreply = (sender,pageid,message,itemcode,itemprice,senderName) => {
     let messageData ={  "text": message,
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"Yes",
-                                            "payload":"YES_ORDER_" + itemcode + "_" + senderName,
+                                            "payload":"YES_ORDER_" + itemcode + "_" + itemprice + "_" + senderName,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"No",
-                                            "payload":"NO_ORDER_" + itemcode+ "_" + senderName,
+                                            "payload":"NO_ORDER_" + itemcode + "_" + itemprice + "_" + senderName,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
                                         }
                                     ]
@@ -97,27 +97,39 @@ module.exports = (event,type) => {
         var jsonPost = JSON.parse(post);
         console.log(jsonPost.message);
         postMessage = jsonPost.message;
-        var itemcode = '';
-        if (postMessage.indexOf('Item for Sale') >= 0) {
+        var codeLine = '';
+        var itemCode = '';
+        var itemPrice = '';
+        if (postMessage.toLocaleLowerCase().indexOf('item for sale') >= 0) {
             var msgLine = postMessage.split('\n');
-            itemcode = msgLine[1];
+            if (msgLine.length < 3) return;
+            //item code
+            codeLine = msgLine[1];
+            var codeParse = codeLine.split(":");
+            var fbitemParse = codeParse[1].split("-");
+            itemCode = fbitemParse[0];
+            itemCode = itemCode.replace(" ","");
+            console.log(fbitemParse);
+
+            //item price
+            var priceLine = msgLine[2];
+            var priceParse = priceLine.split(":");
+            itemPrice = priceParse[1];
+            itemPrice = itemPrice.replace(" ","");
         }
 
-        var code = itemcode.split(":");
-        var codeItem = code[1];
-        codeItem = codeItem.replace(" ","");
 
         var genericMessage = "";
         if (type == 0) {
-            genericMessage = "You commented on our post about item " + itemcode +" would you like to order this item now?";
+            genericMessage = "You commented on our post about item " + codeLine + " would you like to order this item now?";
         } else {
-            genericMessage = "You seems to like our post about item " + itemcode + " would you like to order this item now?";
+            genericMessage = "You seems to like our post about item " + codeLine + " would you like to order this item now?";
         }
         
         var messageData = {
                     message: genericMessage
                 };
 
-        sendQuickreply(senderId,pageId,genericMessage,codeItem,senderName);
+        sendQuickreply(senderId,pageId,genericMessage,itemCode,itemPrice,senderName);
     });
 };

@@ -6,28 +6,28 @@ const facebookAccessToken = {
 
 const request = require('request');
 
-const senOptionQty = (sender,pageId,itemcode,senderName) => {
+const senOptionQty = (sender,pageId,itemcode,itemprice, senderName) => {
     let messageData =   {  "text": "Please specifiy the quantity you want to order",
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"1",
-                                            "payload":"1_QTY_" + itemcode + "_" + senderName
+                                            "payload":"1_QTY_" + itemcode + "_" + itemprice + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"2",
-                                            "payload":"2_QTY_" + itemcode + "_" + senderName
+                                            "payload":"2_QTY_" + itemcode + "_" + itemprice + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"3",
-                                            "payload":"3_QTY_" + itemcode + "_" + senderName
+                                            "payload":"3_QTY_" + itemcode + "_" + itemprice + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"Others",
-                                            "payload":"0_QTY_" + itemcode + "_" + senderName
+                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName
                                         }
                                     ]
                         }
@@ -40,7 +40,7 @@ function zeroPad(num, places) {
   return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
-const checkAccount = (userId, accntName, qty,itemcode) => {
+const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
     var acctCode = zeroPad(userId,18);
     var options = { method: 'GET',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
@@ -54,14 +54,14 @@ const checkAccount = (userId, accntName, qty,itemcode) => {
     if (error) throw new Error(error);
         var jsonBody = JSON.parse(body);
         if (jsonBody.d.results && jsonBody.d.results.length > 0) {
-            getItemForOrder(jsonBody.d.results[0].ID,accntName,qty,itemcode);
+            getItemForOrder(userId,pageId,jsonBody.d.results[0].ID,accntName,qty,itemcode,itemprice);
         } else {
-            createAccount(userId, accntName, qty,itemcode);
+            createAccount(userId,pageId, accntName, qty,itemcode,itemprice);
         }
     });
 }
 
-const createAccount = (userId, accntName, qty,itemcode) => {
+const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
     var acctCode = zeroPad(userId,18);
     var options = { method: 'POST',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
@@ -75,11 +75,11 @@ const createAccount = (userId, accntName, qty,itemcode) => {
     request(options, function (error, response, body) {
     if (error) throw new Error(error);
         console.log(body);
-        getItemForOrder(body.d.ID,accntName,qty,itemcode);
+        getItemForOrder(userId,pageId,body.d.ID,accntName,qty,itemcode,itemprice);
     });
 };
 
-const getItemForOrder = (customerId,customerName,qty,itemcode) => {
+const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,itemprice) => {
     var options = { method: 'GET',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/inventory/ItemWarehouses',
     qs: { '$select': 'Item,ItemDescription,Warehouse',
@@ -96,12 +96,12 @@ const getItemForOrder = (customerId,customerName,qty,itemcode) => {
         var bodyParse = JSON.parse(body);
         if (bodyParse.d && bodyParse.d.length > 0) {
             var item = bodyParse.d[0];
-            createSalesOrder(customerId,customerName,qty,item.Item,item.ItemDescription,item.Warehouse);
+            createSalesOrder(userId,pageId,customerId,customerName,qty,item.Item,item.ItemDescription,item.Warehouse,itemprice);
         }
     });
 }
 
-const createSalesOrder = (customerId,customerName,qty,itemid,itemdesc,warehouse) => {
+const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemdesc,warehouse,itemprice) => {
     var options = { method: 'POST',
     url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
     headers: 
@@ -117,15 +117,15 @@ const createSalesOrder = (customerId,customerName,qty,itemid,itemdesc,warehouse)
                         {
                             Description: itemdesc,
                             Item: itemid,
-                            UnitPrice: 61, Quantity: parseInt(qty)
+                            UnitPrice: parseFloat(itemprice), Quantity: parseInt(qty)
                         }
                     ]}
         };
 
     request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-
-    console.log(body);
+        if (error) throw new Error(error);        
+        sendReceipt(userId,pageId,customerName,itemdesc,itemprice,qty);
+        console.log(body);
     });
 };
 
@@ -168,20 +168,25 @@ const callPrivateReply = (messageData,pageId,comment_id) => {
   });  
 }
 
-const sendReceipt = (sender,pageId) => {
+function toTimestamp(strDate){
+   var datum = Date.parse(strDate);
+   return datum/1000;
+}
+
+const sendReceipt = (sender,pageId,customerName,itemdesc,itemprice,qty) => {
     let messageData = {
                     "attachment":{
                     "type":"template",
                     "payload":{
                         "template_type":"receipt",
-                        "recipient_name":"Stephane Crozatier",
+                        "recipient_name":customerName,
                         "order_number":"12345678902",
-                        "currency":"USD",
+                        "currency":"GBP",
                         "payment_method":"Visa 2345",        
                         "order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
-                        "timestamp":"1428444852",         
+                        "timestamp": toTimestamp(new Date()),         
                         "address":{
-                        "street_1":"1 Hacker Way",
+                        "street_1":"Sample Address",
                         "street_2":"",
                         "city":"Menlo Park",
                         "postal_code":"94025",
@@ -189,43 +194,25 @@ const sendReceipt = (sender,pageId) => {
                         "country":"US"
                         },
                         "summary":{
-                        "subtotal":75.00,
-                        "shipping_cost":4.95,
-                        "total_tax":6.19,
-                        "total_cost":56.14
+                        "subtotal":parseFloat(itemprice) * parseInt(qty),
+                        "shipping_cost":0.00,
+                        "total_tax":0.00,
+                        "total_cost":parseFloat(itemprice) * parseInt(qty)
                         },
-                        "adjustments":[
-                        {
-                            "name":"New Customer Discount",
-                            "amount":20
-                        },
-                        {
-                            "name":"$10 Off Coupon",
-                            "amount":10
-                        }
-                        ],
                         "elements":[
                         {
-                            "title":"Classic White T-Shirt",
-                            "subtitle":"100% Soft and Luxurious Cotton",
-                            "quantity":2,
-                            "price":50,
-                            "currency":"USD",
-                            "image_url":"http://petersapparel.parseapp.com/img/whiteshirt.png"
-                        },
-                        {
-                            "title":"Classic Gray T-Shirt",
-                            "subtitle":"100% Soft and Luxurious Cotton",
-                            "quantity":1,
-                            "price":25,
-                            "currency":"USD",
-                            "image_url":"http://petersapparel.parseapp.com/img/grayshirt.png"
+                            "title":itemdesc,
+                            "subtitle":itemdesc,
+                            "quantity":parseInt(qty),
+                            "price":parseFloat(itemprice),
+                            "currency":"GBP",
+                            "image_url":"https://eol-aurora.herokuapp.com/sample-image.jpg"
                         }
                         ]
                     }
                     }
                 }
-    
+        
     sendTemplateMessage(sender,pageId,messageData);
 }
 
@@ -236,16 +223,15 @@ module.exports = (event) => {
     var genericMessage = "";
     
     var secItem = payload.split('_');
-    const senderName = secItem[3];
     switch (secItem[1]) {
         case "ORDER":
             if (secItem[0] == 'YES') {
-                senOptionQty(senderId,pageId,secItem[2],secItem[3]);
+                senOptionQty(senderId,pageId,secItem[2],secItem[3],secItem[4]);
             }
             break;
         case "QTY":
-            checkAccount(senderId,senderName,secItem[0],secItem[2]);
-            sendReceipt(senderId,pageId);
+            const senderName = secItem[4];
+            checkAccount(senderId,pageId,senderName,secItem[0],secItem[2],secItem[3]);
             break;
     }
 };
