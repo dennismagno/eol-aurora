@@ -9,6 +9,8 @@ const pageOwner = {
     1120366894763266 : 1879680775381226
 }
 
+const eolUrl = "https://7729ce14.ngrok.io/Aurora/";
+
 const request = require('request');
 
 const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision) => {
@@ -48,7 +50,7 @@ function zeroPad(num, places) {
 const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
     var acctCode = userId;
     var options = { method: 'GET',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision +'/crm/Accounts',
+    url: eolUrl + 'api/v1/' + itemDivision +'/crm/Accounts',
     qs: { '$select': 'ID', '$filter': "Code eq \'" + acctCode + "\'" },
     headers: 
     {   'cache-control': 'no-cache',
