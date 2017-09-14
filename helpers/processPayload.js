@@ -57,7 +57,7 @@ const createSalesOrder = (sender) => {
 const sendTemplateMessage = (senderId, pageId,text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: facebookAccessToken[pageid] },
+        qs: { access_token: facebookAccessToken[pageId] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -69,7 +69,7 @@ const sendTemplateMessage = (senderId, pageId,text) => {
 const sendTextMessage = (senderId, pageId, text) => {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: facebookAccessToken[pageid] },
+        qs: { access_token: facebookAccessToken[pageId] },
         method: 'POST',
         json: {
             recipient: { id: senderId },
@@ -78,10 +78,10 @@ const sendTextMessage = (senderId, pageId, text) => {
     });
 };
 
-const callPrivateReply = (messageData,comment_id) => {
+const callPrivateReply = (messageData,pageId,comment_id) => {
   request({
     uri: 'https://graph.facebook.com/v2.9/'+comment_id+'/Comments',
-    qs: { access_token: facebookAccessToken[pageid] },
+    qs: { access_token: facebookAccessToken[pageId] },
     method: 'POST',
     json: messageData
 }, function (error, response, body) {
