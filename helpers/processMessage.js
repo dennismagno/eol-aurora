@@ -205,19 +205,40 @@ const insertAccount = () => {
     var request = require("request");
 
     var options = { method: 'POST',
-    url: 'https://de732193.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+        headers: {  'cache-control': 'no-cache',
+                    authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+                    accept: 'application/json','content-type': 'application/json' 
+                },
+        json : { Code : '               333', Name  : 'Test account 3', Type : 'A', Status : 'C'}
+    };    
+
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+        console.log(body.d.ID);
+    });
+};
+
+const getItemForOrder = () => {
+    var options = { method: 'GET',
+    url: 'http://lt-14-522/Aurora/api/v1/38211/inventory/ItemWarehouses',
+    qs: { '$select': 'Item,ItemDescription,Warehouse',
+          '$top': '1',
+          '$filter': 'ItemCode eq \'IND300654\'' },
     headers: 
     {  'cache-control': 'no-cache',
         authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
         accept: 'application/json',
-        'content-type': 'application/json' },
-    body: '{\r\n  Code : \'               301\',\r\n  Name : \'FB Customer 1\',\r\n  Type : \'A\',\r\n  Status : \'C\'\r\n}' };
+        'content-type': 'application/json' } };
 
     request(options, function (error, response, body) {
-    if (error) throw new Error(error);
-        console.log(body);
+        if (error) throw new Error(error);
+        var bodyParse = JSON.parse(body);
+        if (bodyParse.d && bodyParse.d.length > 0) {
+            console.log(bodyParse.d[0].Item);
+        }
     });
-};
+}
 
 module.exports = (event) => {
     const senderId = event.sender.id;
@@ -252,6 +273,9 @@ module.exports = (event) => {
                         break;
                     case "Account":
                         insertAccount();
+                        break;
+                    case "ItemOrder":
+                        getItemForOrder();
                         break;
                     default:
                         sendTextMessage(senderId, pageId,result);

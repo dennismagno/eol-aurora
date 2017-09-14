@@ -6,28 +6,28 @@ const facebookAccessToken = {
 
 const request = require('request');
 
-const senOptionQty = (sender,pageId) => {
+const senOptionQty = (sender,pageId,itemcode,senderName) => {
     let messageData =   {  "text": "Please specifiy the quantity you want to order",
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"1",
-                                            "payload":"ONE_QTY"
+                                            "payload":"1_QTY_" + itemcode + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"2",
-                                            "payload":"TWO_QTY"
+                                            "payload":"2_QTY_" + itemcode + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"3",
-                                            "payload":"THREE_QTY"
+                                            "payload":"3_QTY_" + itemcode + "_" + senderName
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"Others",
-                                            "payload":"OTHERS_QTY"
+                                            "payload":"0_QTY_" + itemcode + "_" + senderName
                                         }
                                     ]
                         }
@@ -35,17 +35,71 @@ const senOptionQty = (sender,pageId) => {
     sendTemplateMessage(sender,pageId,messageData);
 };
 
-const createSalesOrder = (sender) => {
-    var request = require("request");
+function zeroPad(num, places) {
+  var zero = places - num.toString().length + 1;
+  return Array(+(zero > 0 && zero)).join("0") + num;
+}
 
+const createAccount = (userId, accntName, qty,itemcode) => {
+    var acctCode = zeroPad(userId,18);
     var options = { method: 'POST',
-    url: 'https://de732193.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+        headers: {  'cache-control': 'no-cache',
+                    authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+                    accept: 'application/json','content-type': 'application/json' 
+                },
+        json : { Code : acctCode, Name  : accntName, Type : 'A', Status : 'C'}
+    };    
+
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+        console.log(body);
+        getItemForOrder(body.d.ID,accntName,qty,itemcode);
+    });
+};
+
+const getItemForOrder = (customerId,customerName,qty,itemcode) => {
+    var options = { method: 'GET',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/inventory/ItemWarehouses',
+    qs: { '$select': 'Item,ItemDescription,Warehouse',
+          '$top': '1',
+          '$filter': "ItemCode eq \'" + itemcode + "\'" },
+    headers: 
+    {  'cache-control': 'no-cache',
+        authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+        accept: 'application/json',
+        'content-type': 'application/json' } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        var bodyParse = JSON.parse(body);
+        if (bodyParse.d && bodyParse.d.length > 0) {
+            var item = bodyParse.d[0];
+            createSalesOrder(customerId,customerName,qty,item.Item,item.ItemDescription,item.Warehouse);
+        }
+    });
+}
+
+const createSalesOrder = (customerId,customerName,qty,itemid,itemdesc,warehouse) => {
+    var options = { method: 'POST',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
     headers: 
         {   'cache-control': 'no-cache',
             authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
             accept: 'application/json',
             'content-type': 'application/json' },
-        body: '{\r\n\r\nDescription: \'Sales to FB Customer 1\',\r\nOrderDate: \'09/13/2017 00:00:00\',\r\nOrderedBy : \'8269B2F3-139B-4BA9-BA1A-C197AED7DA72\',\r\nWarehouseID : \'be56f57c-c97c-47ed-84ae-ebf01a758b5f\',\r\n\r\nSalesOrderLines:\r\n[\r\n\r\n{Description: \'FB Order item 1\', Item: \'0d16df33-db0a-46c2-a984-926d6ed57470\', UnitPrice: 61, Quantity: 2}\r\n\r\n]\r\n\r\n}' };
+        json : { 
+                    Description : 'Sales to ' + customerName, 
+                    OrderedBy : customerId, 
+                    WarehouseID : warehouse,
+                    SalesOrderLines : [
+                        {
+                            Description: itemdesc,
+                            Item: itemid,
+                            UnitPrice: 61, Quantity: parseInt(qty)
+                        }
+                    ]}
+        };
 
     request(options, function (error, response, body) {
     if (error) throw new Error(error);
@@ -160,14 +214,16 @@ module.exports = (event) => {
     const payload = event.message.quick_reply.payload;
     var genericMessage = "";
     
-    switch (payload) {
-        case "YES_ORDER":
-            senOptionQty(senderId,pageId);
+    var secItem = payload.split('_');
+    const senderName = secItem[3];
+    switch (secItem[1]) {
+        case "ORDER":
+            if (secItem[0] == 'YES') {
+                senOptionQty(senderId,pageId,secItem[2],secItem[3]);
+            }
             break;
-        case "ONE_QTY":
-        case "TWO_QTY":
-        case "THREE_QTY":
-            createSalesOrder();
+        case "QTY":
+            createAccount(senderId,senderName,secItem[0],secItem[2]);
             sendReceipt(senderId,pageId);
             break;
     }

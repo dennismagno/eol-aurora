@@ -13,19 +13,19 @@ const facebookUserId = {
 
 const request = require('request');
 
-const sendQuickreply = (sender,pageid,message) => {
+const sendQuickreply = (sender,pageid,message,itemcode,senderName) => {
     let messageData ={  "text": message,
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"Yes",
-                                            "payload":"YES_ORDER",
+                                            "payload":"YES_ORDER_" + itemcode + "_" + senderName,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"No",
-                                            "payload":"NO_ORDER",
+                                            "payload":"NO_ORDER_" + itemcode+ "_" + senderName,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
                                         }
                                     ]
@@ -90,29 +90,34 @@ module.exports = (event,type) => {
     const postId = event.value.post_id;
     const pageId = postId.split("_")[0];
     const senderId = facebookUserId[event.value.sender_id];
-    var postMessage = '';  
+    const senderName = event.value.sender_name;
+    var postMessage = '';
+
     getPostDetails(postId,pageId, function(post) {
-         console.log(post);
-        postMessage = post.message;
+        var jsonPost = JSON.parse(post);
+        console.log(jsonPost.message);
+        postMessage = jsonPost.message;
+        var itemcode = '';
+        if (postMessage.indexOf('Item for Sale') >= 0) {
+            var msgLine = postMessage.split('\n');
+            itemcode = msgLine[1];
+        }
+
+        var code = itemcode.split(":");
+        var codeItem = code[1];
+        codeItem = codeItem.replace(" ","");
+
+        var genericMessage = "";
+        if (type == 0) {
+            genericMessage = "You commented on our post about item " + itemcode +" would you like to order this item now?";
+        } else {
+            genericMessage = "You seems to like our post about item " + itemcode + " would you like to order this item now?";
+        }
+        
+        var messageData = {
+                    message: genericMessage
+                };
+
+        sendQuickreply(senderId,pageId,genericMessage,codeItem,senderName);
     });
-    var itemcode = '';
-    if (postMessage.indexOf('Item for Sale')) {
-        var msgLine = postMessage.split('\n');
-        itemcode = postMessage;
-    }
-
-    var genericMessage = "";
-    if (type == 0) {
-         genericMessage = "You commented on our post about item " + itemcode +" would you like to order this item now?";
-    } else {
-        genericMessage = "You seems to like our post about item " + itemcode + " would you like to order this item now?";
-    }
-    
-    var messageData = {
-                message: genericMessage
-              };
-
-    //sendTextMessage(senderId,genericMessage);
-    //callPrivateReply(messageData, commentId);
-    sendQuickreply(senderId,pageId,genericMessage);
 };
