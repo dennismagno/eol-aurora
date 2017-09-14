@@ -141,9 +141,9 @@ const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemd
 };
 
 const notifyPageOwner = (pageId,orderNo) => {
-    const pageOwner = pageOwner[pageId];
+    const ownerId = pageOwner[pageId];
     const message = 'A new tasks is created in EOL for Order No : ' + orderNo;
-    sendTextMessage(pageOwner,pageId,message);
+    sendTextMessage(ownerId,pageId,message);
 }
 
 const notifyCustomer = (userId,pageId,orderNo) => {
