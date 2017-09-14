@@ -164,7 +164,9 @@ module.exports = (event) => {
         case "YES_ORDER":
             senOptionQty(senderId,pageId);
             break;
+        case "ONE_QTY":
         case "TWO_QTY":
+        case "THREE_QTY":
             createSalesOrder();
             sendReceipt(senderId,pageId);
             break;

@@ -80,12 +80,19 @@ module.exports = (event,type) => {
     const postId = event.value.post_id;
     const pageId = postId.split("_")[0];
     const senderId = facebookUserId[event.value.sender_id];
-    const userMessage = event.value.message;
+    const postMessage = event.value.message;
+    var itemcode = '';
+    
+    if (postMessage.indexOf('Item for Sale')) {
+        var msgLine = postMessage.split('\n');
+        itemcode = msgLine[1];
+    }
+
     var genericMessage = "";
     if (type == 0) {
-         genericMessage = "You commented `" + userMessage + "` on our post would you like to order this item now?";
+         genericMessage = "You commented on our post about item " + itemcode +" would you like to order this item now?";
     } else {
-        genericMessage = "You seems to like our post would you like to order this item now?";
+        genericMessage = "You seems to like our post about item " + itemcode + " would you like to order this item now?";
     }
     
     var messageData = {
