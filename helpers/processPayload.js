@@ -40,6 +40,27 @@ function zeroPad(num, places) {
   return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
+const checkAccount = (userId, accntName, qty,itemcode) => {
+    var acctCode = zeroPad(userId,18);
+    var options = { method: 'GET',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    qs: { '$select': 'ID', '$filter': "Code eq \'" + acctCode + "\'" },
+    headers: 
+    {   'cache-control': 'no-cache',
+        authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+        accept: 'application/json',
+        'content-type': 'application/json' }};
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+        var jsonBody = JSON.parse(body);
+        if (jsonBody.d.results && jsonBody.d.results.length > 0) {
+            getItemForOrder(jsonBody.d.results[0].ID,accntName,qty,itemcode);
+        } else {
+            createAccount(userId, accntName, qty,itemcode);
+        }
+    });
+}
+
 const createAccount = (userId, accntName, qty,itemcode) => {
     var acctCode = zeroPad(userId,18);
     var options = { method: 'POST',
@@ -223,7 +244,7 @@ module.exports = (event) => {
             }
             break;
         case "QTY":
-            createAccount(senderId,senderName,secItem[0],secItem[2]);
+            checkAccount(senderId,senderName,secItem[0],secItem[2]);
             sendReceipt(senderId,pageId);
             break;
     }

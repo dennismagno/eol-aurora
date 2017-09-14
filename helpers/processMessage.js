@@ -240,6 +240,27 @@ const getItemForOrder = () => {
     });
 }
 
+const checkAccount = () => {
+    var request = require("request");
+
+    var options = { method: 'GET',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    qs: { '$select': 'ID', '$filter': 'Code eq \'001437288159680128\'' },
+    headers: 
+    { 'postman-token': '28cff6d5-f55c-37c1-735b-4a0368e124c6',
+        'cache-control': 'no-cache',
+        authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+        accept: 'application/json',
+        'content-type': 'application/json' }};
+    request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+        var jsonBody = JSON.parse(body);
+        if (jsonBody.d.results && jsonBody.d.results.length > 0) {
+            console.log(jsonBody.d.results[0].ID);
+        }
+    });
+}
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
@@ -276,6 +297,9 @@ module.exports = (event) => {
                         break;
                     case "ItemOrder":
                         getItemForOrder();
+                        break;
+                    case "CheckAccount":
+                        checkAccount();
                         break;
                     default:
                         sendTextMessage(senderId, pageId,result);
