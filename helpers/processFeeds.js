@@ -11,9 +11,6 @@ const facebookUserId = {
     10208565737134730 : 1375537922563007
 };
 
-//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
-//const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
-
 const request = require('request');
 
 const sendQuickreply = (sender,pageid,message) => {
@@ -67,7 +64,7 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
     qs: { access_token: facebookAccessToken[pageid]  },
     method: 'POST',
     json: messageData
-}, function (error, response, body) {
+    }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       console.log(body);
     } else {
@@ -85,7 +82,7 @@ module.exports = (event,type) => {
     var postMessage = '';  
     var options = { method: 'GET',
     url: 'https://graph.facebook.com/v2.6/' + postId,
-    qs: { access_token: facebookAccessToken[pageid] },
+    qs: { access_token: facebookAccessToken[pageId] },
     headers: { 'cache-control': 'no-cache' } };
 
     request(options, function (error, response, body) {

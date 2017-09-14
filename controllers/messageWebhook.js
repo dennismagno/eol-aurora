@@ -15,7 +15,6 @@ module.exports = (req, res) => {
                         } else {
                             processMessage(event);
                         }
-                       
                     }
                 });
             }
