@@ -7,7 +7,8 @@ const facebookAccessToken = {
 const facebookUserId = {
     852464038261499 : 1437288159680128,
     123939111678488 : 1540337582671286,
-    1617002078374787: 1804321282941786
+    1617002078374787: 1804321282941786,
+    10208565737134730 : 1375537922563007
 };
 
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
@@ -75,8 +76,13 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
   });  
 }
 
-function getPostDetails(postid,pageid) {
-    var retValue = '';
+module.exports = (event,type) => {
+    const commentId = event.value.post_id;
+    const postId = event.value.post_id;
+    const pageId = postId.split("_")[0];
+    const senderId = facebookUserId[event.value.sender_id];
+
+    var postMessage = '';  
     var options = { method: 'GET',
     url: 'https://graph.facebook.com/v2.6/' + postid,
     qs: { access_token: facebookAccessToken[pageid] },
@@ -84,20 +90,10 @@ function getPostDetails(postid,pageid) {
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
-        retValue = body.message;
+        postMessage = body.message;
     });
 
-    return retValue;
-}
-
-module.exports = (event,type) => {
-    const commentId = event.value.post_id;
-    const postId = event.value.post_id;
-    const pageId = postId.split("_")[0];
-    const senderId = facebookUserId[event.value.sender_id];
-    const postMessage = getPostDetails(postId,pageId);
     var itemcode = '';
-
     if (postMessage.indexOf('Item for Sale')) {
         var msgLine = postMessage.split('\n');
         itemcode = msgLine[1];
