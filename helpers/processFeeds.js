@@ -13,19 +13,19 @@ const facebookUserId = {
 
 const request = require('request');
 
-const sendQuickreply = (sender,pageid,message,itemcode,itemprice,senderName) => {
+const sendQuickreply = (sender,pageid,message,itemcode,itemprice,senderName,itemDivision) => {
     let messageData ={  "text": message,
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"Yes",
-                                            "payload":"YES_ORDER_" + itemcode + "_" + itemprice + "_" + senderName,
+                                            "payload":"YES_ORDER_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-like.png"
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"No",
-                                            "payload":"NO_ORDER_" + itemcode + "_" + itemprice + "_" + senderName,
+                                            "payload":"NO_ORDER_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision,
                                             "image_url":"https://eol-aurora.herokuapp.com/icons/aurora-unlike.png"
                                         }
                                     ]
@@ -100,6 +100,7 @@ module.exports = (event,type) => {
         var codeLine = '';
         var itemCode = '';
         var itemPrice = '';
+        var itemDivision = '';
         if (postMessage.toLocaleLowerCase().indexOf('item for sale') >= 0) {
             var msgLine = postMessage.split('\n');
             if (msgLine.length < 3) return;
@@ -109,6 +110,8 @@ module.exports = (event,type) => {
             var fbitemParse = codeParse[1].split("-");
             itemCode = fbitemParse[0];
             itemCode = itemCode.replace(" ","");
+            itemDivision = fbitemParse[1];
+            itemDivision = itemDivision.replace(" ","");
             console.log(fbitemParse);
 
             //item price
@@ -130,6 +133,6 @@ module.exports = (event,type) => {
                     message: genericMessage
                 };
 
-        sendQuickreply(senderId,pageId,genericMessage,itemCode,itemPrice,senderName);
+        sendQuickreply(senderId,pageId,genericMessage,itemCode,itemPrice,senderName,itemDivision);
     });
 };

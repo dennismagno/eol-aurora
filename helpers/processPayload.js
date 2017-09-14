@@ -6,28 +6,28 @@ const facebookAccessToken = {
 
 const request = require('request');
 
-const senOptionQty = (sender,pageId,itemcode,itemprice, senderName) => {
+const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision) => {
     let messageData =   {  "text": "Please specifiy the quantity you want to order",
                         "quick_replies":[
                                         {
                                             "content_type":"text",
                                             "title":"1",
-                                            "payload":"1_QTY_" + itemcode + "_" + itemprice + "_" + senderName
+                                            "payload":"1_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"2",
-                                            "payload":"2_QTY_" + itemcode + "_" + itemprice + "_" + senderName
+                                            "payload":"2_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"3",
-                                            "payload":"3_QTY_" + itemcode + "_" + itemprice + "_" + senderName
+                                            "payload":"3_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         },
                                         {
                                             "content_type":"text",
                                             "title":"Others",
-                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName
+                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         }
                                     ]
                         }
@@ -40,10 +40,10 @@ function zeroPad(num, places) {
   return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
-const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
+const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
     var acctCode = zeroPad(userId,18);
     var options = { method: 'GET',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision +'/crm/Accounts',
     qs: { '$select': 'ID', '$filter': "Code eq \'" + acctCode + "\'" },
     headers: 
     {   'cache-control': 'no-cache',
@@ -54,17 +54,17 @@ const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
     if (error) throw new Error(error);
         var jsonBody = JSON.parse(body);
         if (jsonBody.d.results && jsonBody.d.results.length > 0) {
-            getItemForOrder(userId,pageId,jsonBody.d.results[0].ID,accntName,qty,itemcode,itemprice);
+            getItemForOrder(userId,pageId,jsonBody.d.results[0].ID,accntName,qty,itemcode,itemprice,itemDivision);
         } else {
-            createAccount(userId,pageId, accntName, qty,itemcode,itemprice);
+            createAccount(userId,pageId, accntName, qty,itemcode,itemprice,itemDivision);
         }
     });
 }
 
-const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
+const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
     var acctCode = zeroPad(userId,18);
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/crm/Accounts',
         headers: {  'cache-control': 'no-cache',
                     authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
                     accept: 'application/json','content-type': 'application/json' 
@@ -75,13 +75,13 @@ const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice) => {
     request(options, function (error, response, body) {
     if (error) throw new Error(error);
         console.log(body);
-        getItemForOrder(userId,pageId,body.d.ID,accntName,qty,itemcode,itemprice);
+        getItemForOrder(userId,pageId,body.d.ID,accntName,qty,itemcode,itemprice,itemDivision);
     });
 };
 
-const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,itemprice) => {
+const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,itemprice,itemDivision) => {
     var options = { method: 'GET',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/inventory/ItemWarehouses',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/inventory/ItemWarehouses',
     qs: { '$select': 'Item,ItemDescription,Warehouse',
           '$top': '1',
           '$filter': "ItemCode eq \'" + itemcode + "\'" },
@@ -96,14 +96,14 @@ const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,item
         var bodyParse = JSON.parse(body);
         if (bodyParse.d && bodyParse.d.length > 0) {
             var item = bodyParse.d[0];
-            createSalesOrder(userId,pageId,customerId,customerName,qty,item.Item,item.ItemDescription,item.Warehouse,itemprice);
+            createSalesOrder(userId,pageId,customerId,customerName,qty,item.Item,item.ItemDescription,item.Warehouse,itemprice,itemDivision);
         }
     });
 }
 
-const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemdesc,warehouse,itemprice) => {
+const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemdesc,warehouse,itemprice,itemDivision) => {
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/salesorder/SalesOrders',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/salesorder/SalesOrders',
     headers: 
         {   'cache-control': 'no-cache',
             authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
@@ -126,7 +126,7 @@ const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemd
         if (error) throw new Error(error);        
         var orderNo = body.d.OrderNumber;
         //sendReceipt(userId,pageId,customerName,itemdesc,itemprice,qty,orderNo);
-        createEOLTask(orderNo,customerId,customerName);
+        createEOLTask(orderNo,customerId,customerName,itemDivision);
         notifyPageOwner(pageId,orderNo);
         notifyCustomer(userId,pageId,orderNo);
         console.log(orderNo);
@@ -144,9 +144,9 @@ const notifyCustomer = (userId,pageId,orderNo) => {
     sendTextMessage(userId,pageId,message);
 }
 
-const createEOLTask = (orderNo,customerId, customerName) => {
+const createEOLTask = (orderNo,customerId, customerName, itemDivision) => {
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/activities/Tasks',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/activities/Tasks',
     headers: 
     {  'cache-control': 'no-cache',
         authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
@@ -286,12 +286,12 @@ module.exports = (event) => {
     switch (secItem[1]) {
         case "ORDER":
             if (secItem[0] == 'YES') {
-                senOptionQty(senderId,pageId,secItem[2],secItem[3],secItem[4]);
+                senOptionQty(senderId,pageId,secItem[2],secItem[3],secItem[4],secItem[5]);
             }
             break;
         case "QTY":
             const senderName = secItem[4];
-            checkAccount(senderId,pageId,senderName,secItem[0],secItem[2],secItem[3]);
+            checkAccount(senderId,pageId,senderName,secItem[0],secItem[2],secItem[3],secItem[5]);
             break;
     }
 };
