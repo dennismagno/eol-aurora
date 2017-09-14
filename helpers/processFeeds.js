@@ -87,7 +87,7 @@ module.exports = (event,type) => {
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
-        postMessage = response.body.message;
+        console.log(response.body);
     });
 
     var itemcode = '';
