@@ -9,7 +9,7 @@ const pageOwner = {
     1120366894763266 : 1879680775381226
 }
 
-const eolUrl = "https://7729ce14.ngrok.io/Aurora/";
+const eolUrl = "https://b527c744.ngrok.io/Aurora/";
 
 const request = require('request');
 
@@ -33,8 +33,8 @@ const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision)
                                         },
                                         {
                                             "content_type":"text",
-                                            "title":"Others",
-                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
+                                            "title":"Cancel",
+                                            "payload":"0_CANCEL_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         }
                                     ]
                         }
@@ -147,7 +147,7 @@ const notifyPageOwner = (pageId,orderNo) => {
 }
 
 const notifyCustomer = (userId,pageId,orderNo) => {
-    const message = 'A order was successfully generated with Order No : ' + orderNo + '. Our customer support will contact you for your details';
+    const message = 'A order was successfully generated with Order No : ' + orderNo + '. Our customer support will contact you to finalize your order';
     sendTextMessage(userId,pageId,message);
 }
 
@@ -304,7 +304,7 @@ const sendAskPhoneNo = (sender,pageid) => {
     sendTemplateMessage(sender,pageid,messageData);
 };
 
-const sendGenericMessage = (sender,pageid,senderName) => {
+const sendGenericMessage = (sender,pageid,senderName,division) => {
     let messageData = {
     "attachment": {
       "type": "template",
@@ -319,7 +319,7 @@ const sendGenericMessage = (sender,pageid,senderName) => {
               {
                 "type": "postback",
                 "title": "Buy Now",
-                "payload": "TTPaddle_ITEM_150.00",
+                "payload": "TTPaddle_ITEM_150.00_" + senderName + "_" + division,
               },
             ]
           },
@@ -331,7 +331,7 @@ const sendGenericMessage = (sender,pageid,senderName) => {
               {
                 "type": "postback",
                 "title": "Buy Now",
-                "payload": "CricketBat_ITEM_250.00",
+                "payload": "CricketBat_ITEM_250.00_" + senderName + "_" + division,
               }
             ]
           },
@@ -343,7 +343,7 @@ const sendGenericMessage = (sender,pageid,senderName) => {
               {
                 "type": "postback",
                 "title": "Buy Now",
-                "payload": "Football_ITEM_100.00",
+                "payload": "Football_ITEM_100.00_" + senderName + "_" + division,
               }
             ]
           }
@@ -375,14 +375,22 @@ module.exports = (event) => {
         case "ORDER":
             if (secItem[0] == 'YES') {
                 senOptionQty(senderId,pageId,secItem[2],secItem[3],secItem[4],secItem[5]);
+            } else {
+                sendTextMessage(senderId,pageId,'Thanks for your interest. You can reach us back any time. Have a good day.');
             }
+            break;
+        case "CANCEL":
+            sendTextMessage(senderId,pageId,'Sorry that you have to cancel your order. You can reach us back any time. Have a good day.');
             break;
         case "QTY":
             const senderName = secItem[4];
             checkAccount(senderId,pageId,senderName,secItem[0],secItem[2],secItem[3],secItem[5]);
             break;
         case "START":
-            sendGenericMessage(senderId,pageId);
+            sendGenericMessage(senderId,pageId,'DenRic Magno','56308');
+            break;
+        case "ITEM":
+            senOptionQty(senderId,pageId,secItem[0],secItem[2],secItem[3],secItem[4]);
             break;
     }
 };

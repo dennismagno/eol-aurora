@@ -131,9 +131,9 @@ module.exports = (event,type) => {
 
         var genericMessage = "";
         if (type == 0) {
-            genericMessage = "You commented on our post about item " + codeLine + " would you like to order this item now?";
+            genericMessage = "Hi, thanks for commenting on our post about the item " + codeLine + " would you like to order this item now?";
         } else {
-            genericMessage = "You seems to like our post about item " + codeLine + " would you like to order this item now?";
+            genericMessage = "Hi, you seem to like our post about the item " + codeLine + " would you like to order this item now?";
         }
         
         var messageData = {

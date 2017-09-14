@@ -17,7 +17,7 @@ module.exports = (req, res) => {
                         }
                     }
 
-                    if (event.postback && event.postback.payload == "AURORA_START") 
+                    if (event.postback && event.postback.payload) 
                     {
                         processPayload(event);
                     }
