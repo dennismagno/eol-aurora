@@ -75,14 +75,29 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
   });  
 }
 
+function getPostDetails(postid) {
+    var retValue = '';
+    var options = { method: 'GET',
+    url: 'https://graph.facebook.com/v2.6/' + postid,
+    qs: { access_token: facebookAccessToken[pageid] },
+    headers: { 'cache-control': 'no-cache' } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        retValue = body.message;
+    });
+
+    return retValue;
+}
+
 module.exports = (event,type) => {
     const commentId = event.value.post_id;
     const postId = event.value.post_id;
     const pageId = postId.split("_")[0];
     const senderId = facebookUserId[event.value.sender_id];
-    const postMessage = event.value.message;
+    const postMessage = getPostDetails(postId);
     var itemcode = '';
-    
+
     if (postMessage.indexOf('Item for Sale')) {
         var msgLine = postMessage.split('\n');
         itemcode = msgLine[1];
