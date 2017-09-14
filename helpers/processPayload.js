@@ -304,10 +304,70 @@ const sendAskPhoneNo = (sender,pageid) => {
     sendTemplateMessage(sender,pageid,messageData);
 };
 
+const sendGenericMessage = (sender,pageid,senderName) => {
+    let messageData = {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [
+          {
+            "title": "TT Paddle",
+            "subtitle": "Table tennis paddle - EUR 150.00",
+            "image_url": "https://eol-aurora.herokuapp.com/items/ttpaddle.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "TTPaddle_ITEM_150.00",
+              },
+            ]
+          },
+          {
+            "title": "Cricket Bat - EUR 250.00",
+            "subtitle": "Premium cricket bat",
+            "image_url": "https://eol-aurora.herokuapp.com/items/cricketbat.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "CricketBat_ITEM_250.00",
+              }
+            ]
+          },
+          {
+            "title": "Football - EUR 100.00",
+            "subtitle": "American Football",
+            "image_url": "https://eol-aurora.herokuapp.com/items/football.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "Football_ITEM_100.00",
+              }
+            ]
+          }
+        ]
+      }
+    }
+    }
+
+    sendTemplateMessage(sender,pageid,messageData);
+};
+
 module.exports = (event) => {
     const senderId = event.sender.id;//event.value.sender_id;
     const pageId = event.recipient.id;
-    const payload = event.message.quick_reply.payload;
+    var payload = '';
+
+    if (event.message) {
+       payload = event.message.quick_reply.payload;
+    }
+
+    if (event.postback) {
+       payload = event.postback.payload;
+    }
+    
     var genericMessage = "";
     
     var secItem = payload.split('_');
@@ -320,6 +380,9 @@ module.exports = (event) => {
         case "QTY":
             const senderName = secItem[4];
             checkAccount(senderId,pageId,senderName,secItem[0],secItem[2],secItem[3],secItem[5]);
+            break;
+        case "START":
+            sendGenericMessage(senderId,pageId);
             break;
     }
 };

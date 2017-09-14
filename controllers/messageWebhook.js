@@ -16,6 +16,11 @@ module.exports = (req, res) => {
                             processMessage(event);
                         }
                     }
+
+                    if (event.postback && event.postback.payload == "AURORA_START") 
+                    {
+                        processPayload(event);
+                    }
                 });
             }
 

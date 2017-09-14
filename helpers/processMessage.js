@@ -138,33 +138,52 @@ const sendReceipt = (sender,pageid) => {
     sendTemplateMessage(sender,pageid,messageData);
 }
 
-const sendGenericMessage = (sender,pageid) => {
+const sendGenericMessage = (sender,pageid,senderName) => {
     let messageData = {
-	    "attachment": {
-		    "type": "template",
-		    "payload": {
-                        "template_type": "generic",
-                        "elements": [{
-                            "title": "First card",
-                            "subtitle": "Gundam News, Gunpla Latest Release Model Kits",
-                            "image_url": "https://eol-aurora.herokuapp.com/items/ttpaddle.jpg",
-                            "buttons": [ {
-                                    "type": "Buy Now",
-                                    "title": "Buy Now",
-                                    "payload": "ttpaddle",
-                                }],
-                        }, {
-                        "title": "Cricket Bat",
-                        "subtitle": "Perfect Grade Strike Gundam",
-                        "image_url": "https://eol-aurora.herokuapp.com/items/cricketbat.jpg",
-                        "buttons": [{
-                            "type": "postback",
-                            "title": "Postback",
-                            "payload": "Payload for second element in a generic bubble",
-                        }],
-			    }]
-		    }
-	    }
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [
+          {
+            "title": "TT Paddle",
+            "subtitle": "Table tennis paddle - EUR 150.00",
+            "image_url": "https://eol-aurora.herokuapp.com/items/ttpaddle.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "TTPaddle_ITEM_150.00",
+              },
+            ]
+          },
+          {
+            "title": "Cricket Bat - EUR 250.00",
+            "subtitle": "Premium cricket bat",
+            "image_url": "https://eol-aurora.herokuapp.com/items/cricketbat.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "CricketBat_ITEM_250.00",
+              }
+            ]
+          },
+          {
+            "title": "Football - EUR 100.00",
+            "subtitle": "American Football",
+            "image_url": "https://eol-aurora.herokuapp.com/items/football.jpg",
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Buy Now",
+                "payload": "Football_ITEM_100.00",
+              }
+            ]
+          }
+        ]
+      }
+    }
     }
 
     sendTemplateMessage(sender,pageid,messageData);
@@ -258,6 +277,21 @@ const checkAccount = () => {
     });
 }
 
+function createGreetingApi(data) {
+    request({
+        uri: 'https://graph.facebook.com/v2.6/me/thread_settings',
+        qs: { access_token: PAGE_ACCESS_TOKEN },
+                method: 'POST',
+                json: data
+            }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log("Greeting set successfully!");
+        } else {
+            console.error("Failed calling Thread Reference API", response.statusCode,     response.statusMessage, body.error);
+        }
+    });  
+}
+
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
@@ -274,7 +308,7 @@ module.exports = (event) => {
             if (event.message && event.message.text) {
                 let text = event.message.text
                 switch (text) {
-                    case "Generic":
+                    case "Get Started":
                         sendGenericMessage(senderId,pageId);
                         break;
                     case "Quick":
