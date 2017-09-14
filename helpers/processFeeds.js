@@ -75,7 +75,7 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
   });  
 }
 
-function getPostDetails(postid) {
+function getPostDetails(postid,) {
     var retValue = '';
     var options = { method: 'GET',
     url: 'https://graph.facebook.com/v2.6/' + postid,
@@ -95,7 +95,7 @@ module.exports = (event,type) => {
     const postId = event.value.post_id;
     const pageId = postId.split("_")[0];
     const senderId = facebookUserId[event.value.sender_id];
-    const postMessage = getPostDetails(postId);
+    const postMessage = getPostDetails(postId,pageId);
     var itemcode = '';
 
     if (postMessage.indexOf('Item for Sale')) {
