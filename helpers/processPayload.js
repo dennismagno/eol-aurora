@@ -124,10 +124,42 @@ const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemd
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);        
-        sendReceipt(userId,pageId,customerName,itemdesc,itemprice,qty);
-        console.log(body);
+        var orderNo = body.d.OrderNumber;
+        //sendReceipt(userId,pageId,customerName,itemdesc,itemprice,qty,orderNo);
+        createEOLTask(orderNo,customerId,customerName);
+        notifyPageOwner(pageId,orderNo);
+        notifyCustomer(userId,pageId,orderNo);
+        console.log(orderNo);
     });
 };
+
+const notifyPageOwner = (pageId,orderNo) => {
+    const pageOwner = 1540337582671286;
+    const message = 'A new tasks is created in EOL for Order No : ' + orderNo;
+    sendTextMessage(pageOwner,pageId,message);
+}
+
+const notifyCustomer = (userId,pageId,orderNo) => {
+    const message = 'A order was successfully generated with Order No : ' + orderNo + '. Our customer support will contact you for your details';
+    sendTextMessage(userId,pageId,message);
+}
+
+const createEOLTask = (orderNo,customerId, customerName) => {
+    var options = { method: 'POST',
+    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/activities/Tasks',
+    headers: 
+    {  'cache-control': 'no-cache',
+        authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
+        accept: 'application/json',
+        'content-type': 'application/json' },
+    body: "{\r\n  Account : \'" + customerId + "\',\r\n  Description : \'New Sales Order by Smart Seller\',\r\n  Notes : \'Order No : " + orderNo +  "\'\r\n}" };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+
+        console.log(body);
+    });
+}
 
 const sendTemplateMessage = (senderId, pageId,text) => {
     request({
@@ -173,14 +205,14 @@ function toTimestamp(strDate){
    return datum/1000;
 }
 
-const sendReceipt = (sender,pageId,customerName,itemdesc,itemprice,qty) => {
+const sendReceipt = (sender,pageId,customerName,itemdesc,itemprice,qty,orderno) => {
     let messageData = {
                     "attachment":{
                     "type":"template",
                     "payload":{
                         "template_type":"receipt",
                         "recipient_name":customerName,
-                        "order_number":"12345678902",
+                        "order_number":orderno,
                         "currency":"GBP",
                         "payment_method":"Visa 2345",        
                         "order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
@@ -215,6 +247,34 @@ const sendReceipt = (sender,pageId,customerName,itemdesc,itemprice,qty) => {
         
     sendTemplateMessage(sender,pageId,messageData);
 }
+
+const setTypingOn = (senderId, pageId) => {
+    var body = JSON.stringify({
+        recipient: { senderId },
+        "sender_action":"typing_on"
+    });
+
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: facebookAccessToken[pageId] },
+        method: 'POST',
+        body
+    });
+};
+
+const setTypingOff = (senderId, pageId) => {
+    var body = JSON.stringify({
+        recipient: { senderId },
+        "sender_action":"typing_off"
+    });
+
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: facebookAccessToken[pageId] },
+        method: 'POST',
+        body
+    });
+};
 
 module.exports = (event) => {
     const senderId = event.sender.id;//event.value.sender_id;
