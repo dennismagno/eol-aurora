@@ -73,13 +73,7 @@ const callPrivateReply = (messageData,pageid,comment_id) => {
   });  
 }
 
-module.exports = (event,type) => {
-    const commentId = event.value.post_id;
-    const postId = event.value.post_id;
-    const pageId = postId.split("_")[0];
-    const senderId = facebookUserId[event.value.sender_id];
-
-    var postMessage = '';  
+function getPostDetails(postId,pageId,callback) {
     var options = { method: 'GET',
     url: 'https://graph.facebook.com/v2.6/' + postId,
     qs: { access_token: facebookAccessToken[pageId] },
@@ -88,8 +82,19 @@ module.exports = (event,type) => {
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
         console.log(response.body);
+        callback(response.body);
     });
+}
 
+module.exports = (event,type) => {
+    const commentId = event.value.post_id;
+    const postId = event.value.post_id;
+    const pageId = postId.split("_")[0];
+    const senderId = facebookUserId[event.value.sender_id];
+    var postMessage = '';  
+    getPostDetails(postId,pageId, function(post) {
+        postMessage = post.message;
+    });
     var itemcode = '';
     if (postMessage.indexOf('Item for Sale')) {
         var msgLine = postMessage.split('\n');
