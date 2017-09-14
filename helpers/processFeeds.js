@@ -81,7 +81,6 @@ function getPostDetails(postId,pageId,callback) {
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
-        console.log(response.body);
         callback(response.body);
     });
 }
@@ -93,6 +92,7 @@ module.exports = (event,type) => {
     const senderId = facebookUserId[event.value.sender_id];
     var postMessage = '';  
     getPostDetails(postId,pageId, function(post) {
+         console.log(post);
         postMessage = post.message;
     });
     var itemcode = '';
