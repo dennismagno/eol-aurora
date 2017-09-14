@@ -30,11 +30,6 @@ const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision)
                                             "content_type":"text",
                                             "title":"3",
                                             "payload":"3_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
-                                        },
-                                        {
-                                            "content_type":"text",
-                                            "title":"Others",
-                                            "payload":"0_QTY_" + itemcode + "_" + itemprice + "_" + senderName + "_" + itemDivision
                                         }
                                     ]
                         }
@@ -71,7 +66,7 @@ const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivis
 const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
     var acctCode = userId;
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/crm/Accounts',
+    url: eolUrl + 'api/v1/' + itemDivision + '/crm/Accounts',
         headers: {  'cache-control': 'no-cache',
                     authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
                     accept: 'application/json','content-type': 'application/json' 
@@ -88,7 +83,7 @@ const createAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivi
 
 const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,itemprice,itemDivision) => {
     var options = { method: 'GET',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/inventory/ItemWarehouses',
+    url: eolUrl + 'api/v1/' + itemDivision + '/inventory/ItemWarehouses',
     qs: { '$select': 'Item,ItemDescription,Warehouse',
           '$top': '1',
           '$filter': "ItemCode eq \'" + itemcode + "\'" },
@@ -110,7 +105,7 @@ const getItemForOrder = (userId,pageId,customerId,customerName,qty,itemcode,item
 
 const createSalesOrder = (userId,pageId,customerId,customerName,qty,itemid,itemdesc,warehouse,itemprice,itemDivision) => {
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/salesorder/SalesOrders',
+    url: eolUrl + 'api/v1/' + itemDivision + '/salesorder/SalesOrders',
     headers: 
         {   'cache-control': 'no-cache',
             authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
@@ -153,7 +148,7 @@ const notifyCustomer = (userId,pageId,orderNo) => {
 
 const createEOLTask = (orderNo,customerId, customerName, itemDivision) => {
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/' + itemDivision + '/activities/Tasks',
+    url: eolUrl + 'api/v1/' + itemDivision + '/activities/Tasks',
     headers: 
     {  'cache-control': 'no-cache',
         authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
