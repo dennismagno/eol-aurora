@@ -84,7 +84,7 @@ module.exports = (event,type) => {
 
     var postMessage = '';  
     var options = { method: 'GET',
-    url: 'https://graph.facebook.com/v2.6/' + postid,
+    url: 'https://graph.facebook.com/v2.6/' + postId,
     qs: { access_token: facebookAccessToken[pageid] },
     headers: { 'cache-control': 'no-cache' } };
 
