@@ -39,14 +39,14 @@ const senOptionQty = (sender,pageId,itemcode,itemprice, senderName,itemDivision)
 
 function zeroPad(num, places) {
   var zero = places - num.toString().length + 1;
-  return Array(+(zero > 0 && zero)).join("0") + num;
+  return Array(+(zero > 0 && zero)).join(" ") + num;
 }
 
 const checkAccount = (userId,pageId, accntName, qty,itemcode,itemprice,itemDivision) => {
     var acctCode = userId;
     var options = { method: 'GET',
     url: eolUrl + 'api/v1/' + itemDivision +'/crm/Accounts',
-    qs: { '$select': 'ID', '$filter': "Code eq \'" + acctCode + "\'" },
+    qs: { '$select': 'ID', '$filter': "TRIM(Code) eq \'" + acctCode + "\'" },
     headers: 
     {   'cache-control': 'no-cache',
         authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
