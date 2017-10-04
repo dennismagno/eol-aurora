@@ -9,6 +9,8 @@ const facebookAccessToken = {
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAEN32nDgs8rK05FW51XJFPdlstD4nSZBGHRZAedJfXMaykAV3dccGZArYXUAd7ljXunIzHx9Y20KWtLZAksub6laL9JZBq3lBCcZAyEsIpw8WX4pWzoXrnwlWxbszch5l9vEGOQZCaAEyZCNtKkRXgc23TKMq1ZCEMAZDZD';
 //const FACEBOOK_ACCESS_TOKEN = 'EAABmovau6lkBAKGpc4uRCLBPlMLYLuGJZCJbUqPdDZAjSmSfgd35eASU4Blmyx9ehftKpC3XialyoGdtbHZBRHZAnuYpYqONGycgzUDbJs9AY1RRUT00KsBjnQXgBVWD6ZAgrkZBG0xRqzxiJRWBjMjZAFGEGLJlsAEmrebOFiVNVzvno3WBG7N8TBwt4CUU8ivJGWU93H0zAfe7Ym2Ip3B';
 
+const eolUrl = "'https://d2978edf.ngrok.io/Aurora/";
+
 const request = require('request');
 
 const apiAiClient = require('apiai')(API_AI_TOKEN);
@@ -203,7 +205,7 @@ const postOnFB = (pageid) => {
 
 const getEOLJournal = () => {
     var options = { method: 'GET',
-    url: 'https://5a109f3c.ngrok.io/WI775382/api/v1/50580/financial/Journals',
+    url: eolUrl + 'api/v1/56308/financial/Journals',
     headers:  { 'cache-control': 'no-cache',
                 accept: 'application/json',
                 'content-type': 'application/json;charset=utf-8',
@@ -221,7 +223,7 @@ const insertAccount = () => {
     var request = require("request");
 
     var options = { method: 'POST',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    url: eolUrl + 'api/v1/56308/crm/Accounts',
         headers: {  'cache-control': 'no-cache',
                     authorization: 'Basic Q3VzdG9tZXJUcmFkZVByZW1pdW06T25saW5l',
                     accept: 'application/json','content-type': 'application/json' 
@@ -237,7 +239,7 @@ const insertAccount = () => {
 
 const getItemForOrder = () => {
     var options = { method: 'GET',
-    url: 'http://lt-14-522/Aurora/api/v1/38211/inventory/ItemWarehouses',
+    url: eolUrl + 'api/v1/56308/inventory/ItemWarehouses',
     qs: { '$select': 'Item,ItemDescription,Warehouse',
           '$top': '1',
           '$filter': 'ItemCode eq \'IND300654\'' },
@@ -260,7 +262,7 @@ const checkAccount = () => {
     var request = require("request");
 
     var options = { method: 'GET',
-    url: 'https://7729ce14.ngrok.io/Aurora/api/v1/38211/crm/Accounts',
+    url: eolUrl + 'api/v1/56308/crm/Accounts',
     qs: { '$select': 'ID', '$filter': 'Code eq \'001437288159680128\'' },
     headers: 
     { 'postman-token': '28cff6d5-f55c-37c1-735b-4a0368e124c6',
