@@ -9,7 +9,7 @@ const pageOwner = {
     1120366894763266 : 1879680775381226
 }
 
-const eolUrl = "'https://d2978edf.ngrok.io/Aurora/";
+const eolUrl = "https://d2978edf.ngrok.io/Aurora/";
 
 const request = require('request');
 
